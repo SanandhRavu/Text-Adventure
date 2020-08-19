@@ -100,7 +100,7 @@ inv = ', '
 
 # combat functions
 def fleecheck(enemy):
-    if random.random() <= player.flee:
+    if random.uniform(0,enemy.flee) <= player.flee:
         return True
     else:
         return False
