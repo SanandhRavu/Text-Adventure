@@ -36,7 +36,12 @@ def main():
         winventory.update({answer: current_node.reward[1]})
     else:
         winventory.update({answer: current_node.reward[2]})
-    choice = input(f"{current_node.prompt}").lower().strip()
+    while True:
+        choice = input(f"{current_node.prompt}").lower().strip()
+        if choice not in ["a", "b"]:
+            print("Please pick a valid choice")
+        else:
+            break
     # Beginning of gameplay loop
     for split in range(2):
         if choice == "a":
