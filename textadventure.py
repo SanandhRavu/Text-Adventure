@@ -49,54 +49,54 @@ def main():
             current_node = current_node.left
         else:
             current_node = current_node.right
-            print(current_node.text)
+        print(current_node.text)
+        while True:
+            answer = input(f"You see one {current_node.food.name}, do you want to inspect it? ").lower().strip()
+            if answer not in ("y", "yes", "n", "no"):
+                print("Please say Yes or No")
+            else:
+                break
+        if answer in ("y", "yes"):
+            current_node.food.inspect()
             while True:
-                answer = input(f"You see one {current_node.food.name}, do you want to inspect it? ").lower().strip()
+                answer = input(f"Do you want to take the {current_node.food}? ")
                 if answer not in ("y", "yes", "n", "no"):
                     print("Please say Yes or No")
                 else:
                     break
             if answer in ("y", "yes"):
-                current_node.food.inspect()
-                while True:
-                    answer = input(f"Do you want to take the {current_node.food}? ")
-                    if answer not in ("y", "yes", "n", "no"):
-                        print("Please say Yes or No")
-                    else:
-                        break
-                if answer in ("y", "yes"):
-                    food_inventory.append(current_node.food)
-                    finventory.update({str(current_node.food).lower(): current_node.food})
-                    current_node.food.item_get()
-            for monster in range(len(current_node.enemies)):
-                combat(current_node.enemies[monster])
-                time.sleep(1)
-            print(f"{player.name} finds three treasure chests: ")
-            for option in range(len(current_node.reward)):
-                print(f"{current_node.reward[option].name}, "
-                      f"Power: {current_node.reward[option].power},"
-                      f"Accuracy: {current_node.reward[option].accuracy}")
-            while True:
-                check = False
-                answer = input("Select one treasure to take with you: ").lower().strip()
-                for item in range(len(current_node.reward)):
-                    if answer != current_node.reward[item].name.lower():
-                        check = False
-                        continue
-                    else:
-                        check = True
-                        break
-                if check:
-                    break
+                food_inventory.append(current_node.food)
+                finventory.update({str(current_node.food).lower(): current_node.food})
+                current_node.food.item_get()
+        for monster in range(len(current_node.enemies)):
+            combat(current_node.enemies[monster])
+            time.sleep(1)
+        print(f"{player.name} finds three treasure chests: ")
+        for option in range(len(current_node.reward)):
+            print(f"{current_node.reward[option].name}, "
+                  f"Power: {current_node.reward[option].power},"
+                  f"Accuracy: {current_node.reward[option].accuracy}")
+        while True:
+            check = False
+            answer = input("Select one treasure to take with you: ").lower().strip()
+            for item in range(len(current_node.reward)):
+                if answer != current_node.reward[item].name.lower():
+                    check = False
+                    continue
                 else:
-                    print("Please select a valid reward")
-            weapon_inventory.append(answer)
-            if answer in str(current_node.reward[0]).lower():
-                winventory.update({answer: current_node.reward[0]})
-            elif answer in str(current_node.reward[0]).lower():
-                winventory.update({answer: current_node.reward[1]})
+                    check = True
+                    break
+            if check:
+                break
             else:
-                winventory.update({answer: current_node.reward[2]})
+                print("Please select a valid reward")
+        weapon_inventory.append(answer)
+        if answer in str(current_node.reward[0]).lower():
+            winventory.update({answer: current_node.reward[0]})
+        elif answer in str(current_node.reward[0]).lower():
+            winventory.update({answer: current_node.reward[1]})
+        else:
+            winventory.update({answer: current_node.reward[2]})
 
 
 class Entity:
