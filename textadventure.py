@@ -47,6 +47,8 @@ def main():
                 break
         if choice == "a":
             current_node = current_node.left
+        else:
+            current_node = current_node.right
             print(current_node.text)
             while True:
                 answer = input(f"You see one {current_node.food.name}, do you want to inspect it? ").lower().strip()
@@ -95,31 +97,6 @@ def main():
                 winventory.update({answer: current_node.reward[1]})
             else:
                 winventory.update({answer: current_node.reward[2]})
-
-        elif choice == "b":
-            current_node = current_node.right
-            print(current_node.text)
-            while True:
-                answer = input(f"You see one {current_node.food.name}, do you want to inspect it? ").lower().strip()
-                if answer not in ("y", "yes", "n", "no"):
-                    print("Please say Yes or No")
-                else:
-                    break
-            if answer in ("y", "yes"):
-                current_node.food.inspect()
-                while True:
-                    answer = input(f"Do you want to take the {current_node.food}? ")
-                    if answer not in ("y", "yes", "n", "no"):
-                        print("Please say Yes or No")
-                    else:
-                        break
-                if answer in ("y", "yes"):
-                    food_inventory.append(current_node.food)
-                    finventory.update({str(current_node.food).lower(): current_node.food})
-                    current_node.food.item_get()
-            for monster in range(len(current_node.enemies)):
-                combat(current_node.enemies[monster])
-                time.sleep(1)
 
 
 class Entity:
