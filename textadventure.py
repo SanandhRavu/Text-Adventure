@@ -36,14 +36,15 @@ def main():
         winventory.update({answer: current_node.reward[1]})
     else:
         winventory.update({answer: current_node.reward[2]})
-    while True:
-        choice = input(f"{current_node.prompt}").lower().strip()
-        if choice not in ["a", "b"]:
-            print("Please pick a valid choice")
-        else:
-            break
     # Beginning of gameplay loop
-    for split in range(2):
+    # for split in range(2):
+    while not current_node.end:
+        while True:
+            choice = input(f"{current_node.prompt}").lower().strip()
+            if choice not in ["a", "b"]:
+                print("Please pick a valid choice")
+            else:
+                break
         if choice == "a":
             current_node = current_node.left
             print(current_node.text)
@@ -94,9 +95,8 @@ def main():
                 winventory.update({answer: current_node.reward[1]})
             else:
                 winventory.update({answer: current_node.reward[2]})
-            choice = input(f"{current_node.prompt}").lower().strip()
 
-        if choice == "b":
+        elif choice == "b":
             current_node = current_node.right
             print(current_node.text)
             while True:
@@ -120,7 +120,6 @@ def main():
             for monster in range(len(current_node.enemies)):
                 combat(current_node.enemies[monster])
                 time.sleep(1)
-            choice = input(f"{current_node.prompt}").lower().strip()
 
 
 class Entity:
@@ -224,7 +223,7 @@ class Food(Item):
 
 
 class Node:
-    def __init__(self, value, text, food, enemies, reward, prompt):
+    def __init__(self, value, text, food, enemies, reward, prompt, end):
         self.left = None
         self.right = None
         self.value = value
@@ -233,25 +232,27 @@ class Node:
         self.enemies = enemies
         self.reward = reward
         self.prompt = prompt
+        self.end = end
 
-    def insert(self, value, text, food, enemies, reward, prompt):
+    def insert(self, value, text, food, enemies, reward, prompt, end):
         if self.value:
             if value < self.value:
                 if self.left is None:
-                    self.left = Node(value, text, food, enemies, reward, prompt)
+                    self.left = Node(value, text, food, enemies, reward, prompt, end)
                 else:
-                    self.left.insert(value, text, food, enemies, reward, prompt)
+                    self.left.insert(value, text, food, enemies, reward, prompt, end)
             elif value > self.value:
                 if self.right is None:
-                    self.right = Node(value, text, food, enemies, reward, prompt)
+                    self.right = Node(value, text, food, enemies, reward, prompt, end)
                 else:
-                    self.right.insert(value, text, food, enemies, reward, prompt)
+                    self.right.insert(value, text, food, enemies, reward, prompt, end)
         else:
             self.value = value
             self.text = text
             self.food = food
             self.enemies = enemies
             self.prompt = prompt
+            self.end = end
 
 
 # Combat loop
@@ -371,21 +372,24 @@ root = Node(4,
             None,
             basic_weapons,
             "To travel to the Dragon King\'s lair, you must travel through "
-            "(A) the Dark Woods, or (B) the Swamp of Terror. Which will you choose? ")
+            "(A) the Dark Woods, or (B) the Swamp of Terror. Which will you choose? ",
+            False)
 root.insert(2,
             "You travel to the Dark Woods. The air is chilly and you can barely see in front of you",
             apple,
             ogre,
             intermediate_weapons,
             f"{player.name} has emerged from the Dark Woods! You find a fork in the road. "
-            "Do you go to (A) the High Fort, or (B) the Dread Tower? ")
+            "Do you go to (A) the High Fort, or (B) the Dread Tower? ",
+            False)
 root.insert(6,
             "You travel to the Swamp of Terror. The putrid stench fills your nose making it hard to breathe.",
             apple,
             mushroom,
             intermediate_weapons,
             f"{player.name} has emerged from the Swamp of Terror! You find a fork in the road."
-            f"Do you go to (A) the Wolf Den, or (B) the Mirage Desert? ")
+            f"Do you go to (A) the Wolf Den, or (B) the Mirage Desert? ",
+            False)
 root.insert(1,
             "You travel to the High Fort. The massive structure sits atop a large cliff. "
             "At the entrance you see The Dragon Knight. He challenges you to a duel.",
@@ -393,28 +397,32 @@ root.insert(1,
             knight,
             gold_weapons,
             "The Dragon Knight's forces dissipate into the darkness. The Fort is conquered."
-            "")
+            "",
+            True)
 root.insert(3,
             "You travel to the Dread Tower. The colossal structure pierces the heavens themselves. "
             "You climb to the top and meet the Demon Wizard in his study.",
             meat,
             wizard,
             gold_weapons,
-            "")
+            "",
+            False)
 root.insert(5,
             "You travel to the Wolf Den. Bones of its deceased prey cover the ground. "
             "You hear its snarl as it approaches from his nest.",
             potion,
             wolf,
             gold_weapons,
-            "")
+            "",
+            False)
 root.insert(7,
             "You travel to the Mirage Desert. Sweat drips quickly down your body and evaporates just as fast. "
             "The ground trembles and a sand giant emerges.",
             potion,
             giant,
             gold_weapons,
-            "")
+            "",
+            False)
 
 # Run Game
 main()
