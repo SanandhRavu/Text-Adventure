@@ -36,8 +36,8 @@ def main():
         winventory.update({answer: current_node.reward[1]})
     else:
         winventory.update({answer: current_node.reward[2]})
+    
     # Beginning of gameplay loop
-    # for split in range(2):
     while not current_node.end:
         while True:
             choice = input(f"{current_node.prompt}").lower().strip()
