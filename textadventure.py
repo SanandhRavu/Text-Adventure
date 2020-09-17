@@ -1,303 +1,412 @@
+
 import sys
 import random
+import time
+
+name = input("What is your name? ").strip()
 
 
-# character stats
-class Character:
-    def __init__(self, name, lvl, maxhp, hp, power, accuracy, exp, flee):
-        self.name = name
-        self.lvl = lvl
-        self.maxhp = maxhp
-        self.hp = hp
-        self.power = power
-        self.accuracy = accuracy
-        self.exp = exp
-        self.flee = flee
-
-
-# weapon stats and types
-class Weapon:
-    def __init__(self, name, power, accuracy):
-        self.name = name
-        self.power = power
-        self.accuracy = accuracy
-
-
-bs = Weapon('Basic Sword', 30, .90)
-bl = Weapon('Basic Lance', 40, .80)
-ba = Weapon('Basic Axe', 50, .70)
-
-ins = Weapon('Intermediate Sword', 40, .80)
-inl = Weapon('Intermediate Lance', 50, .70)
-ina = Weapon('Intermediate Axe', 60, .60)
-
-ads = Weapon('Advanced Sword', 50, .70)
-adl = Weapon('Advanced Lance', 60, .60)
-ada = Weapon('Advanced Axe', 70, .50)
-
-
-# enemy stats and types
-class Enemy:
-    def __init__(self, name, hp, power, accuracy, exp, flee):
-        self.name = name
-        self.hp = hp
-        self.power = power
-        self.accuracy = accuracy
-        self.exp = exp
-        self.flee = flee
-
-
-ogre1 = Enemy('Ogre', 100, 10, .75, 40, .50)
-ogre2 = Enemy('Ogre', 100, 10, .75, 40, .50)
-ogre3 = Enemy('Ogre', 100, 10, .75, 40, .50)
-
-mushroom1 = Enemy('Giant Mushroom', 100, 15, .65, 40, .50)
-mushroom2 = Enemy('Giant Mushroom', 100, 15, .65, 40, .50)
-mushroom3 = Enemy('Giant Mushroom', 100, 15, .65, 40, .50)
-
-scorpion1 = Enemy('Fire Scorpion', 120, 20, .75, 60, .60)
-scorpion2 = Enemy('Fire Scorpion', 120, 20, .75, 60, .60)
-scorpion3 = Enemy('Fire Scorpion', 120, 20, .75, 60, .60)
-
-pixie1 = Enemy('Corrupted Pixie', 130, 25, .65, 60, .60)
-pixie2 = Enemy('Corrupted Pixie', 130, 25, .65, 60, .60)
-pixie3 = Enemy('Corrupted Pixie', 130, 25, .65, 60, .60)
-
-dknight = Enemy('Dark Knight', 150, 30, .80, 80, .50)
-dknight = Enemy('Dark Knight', 150, 30, .80, 80, .50)
-
-dking = Enemy('Dragon King Fellheart', 200, 35, .6, 100, 1.00)
-
-
-# food stats and types
-class Food:
-    def __init__(self, name, recovery):
-        self.name = name
-        self.recovery = recovery
-
-    def inspect(self):
-        print('Name: {0}, Recovery: {1}'.format(self.name, self.recovery))
-
-
-apple = Food('apple', 20)
-meat = Food('meat', 30)
-potion = Food('potion', 50)
-greaterpotion = Food('greater potion', 80)
-elixer = Food('elixer', 10000)
-
-
-def ItemGet(item):
-    return 'You have picked up {0}'.format(item)
-
-
-# inventory logistics
-weaponinventory = []
-foodinventory = []
-winventory = {}
-finventory = {}
-inv = ', '
-
-
-# combat functions
-def fleecheck(enemy):
-    if random.uniform(0,enemy.flee) <= player.flee:
-        return True
+def main():
+    # Game Start and character customization
+    current_node = root
+    print(f"{current_node.text}")
+    print("Choose your starting weapon:")
+    for i in range(len(current_node.reward)):
+        print(f"Choose weapon: {current_node.reward[i].name}, "
+              f"Power: {current_node.reward[i].power}, "
+              f"Accuracy: {current_node.reward[i].accuracy}")
+    while True:
+        check = False
+        answer = input("Select weapon: ").lower().strip()
+        for item in range(len(current_node.reward)):
+            if answer != current_node.reward[item].name.lower():
+                check = False
+                continue
+            else:
+                check = True
+                break
+        if check:
+            break
+        else:
+            print("Please select a valid weapon")
+    weapon_inventory.append(answer)
+    if answer in str(current_node.reward[0]).lower():
+        winventory.update({answer: current_node.reward[0]})
+    elif answer in str(current_node.reward[0]).lower():
+        winventory.update({answer: current_node.reward[1]})
     else:
+        winventory.update({answer: current_node.reward[2]})
+
+    # Beginning of gameplay loop
+    while not current_node.end:
+        while True:
+            choice = input(f"{current_node.prompt}").lower().strip()
+            if choice not in ["a", "b"]:
+                print("Please pick a valid choice")
+            else:
+                break
+        if choice == "a":
+            current_node = current_node.left
+        else:
+            current_node = current_node.right
+        print(current_node.text)
+        while True:
+            answer = input(f"You see one {current_node.food.name}, do you want to inspect it? ").lower().strip()
+            if answer not in ("y", "yes", "n", "no"):
+                print("Please say Yes or No")
+            else:
+                break
+        if answer in ("y", "yes"):
+            current_node.food.inspect()
+            while True:
+                answer = input(f"Do you want to take the {current_node.food}? ")
+                if answer not in ("y", "yes", "n", "no"):
+                    print("Please say Yes or No")
+                else:
+                    break
+            if answer in ("y", "yes"):
+                food_inventory.append(current_node.food)
+                finventory.update({str(current_node.food).lower(): current_node.food})
+                current_node.food.item_get()
+        for monster in range(len(current_node.enemies)):
+            combat(current_node.enemies[monster])
+            time.sleep(1)
+        print(f"{player.name} finds three treasure chests: ")
+        for option in range(len(current_node.reward)):
+            print(f"{current_node.reward[option].name}, "
+                  f"Power: {current_node.reward[option].power},"
+                  f"Accuracy: {current_node.reward[option].accuracy}")
+        while True:
+            check = False
+            answer = input("Select one treasure to take with you: ").lower().strip()
+            for item in range(len(current_node.reward)):
+                if answer != current_node.reward[item].name.lower():
+                    check = False
+                    continue
+                else:
+                    check = True
+                    break
+            if check:
+                break
+            else:
+                print("Please select a valid reward")
+        weapon_inventory.append(answer)
+        if answer in str(current_node.reward[0]).lower():
+            winventory.update({answer: current_node.reward[0]})
+        elif answer in str(current_node.reward[0]).lower():
+            winventory.update({answer: current_node.reward[1]})
+        else:
+            winventory.update({answer: current_node.reward[2]})
+    print("You Win! Try to defeat all four of the Dragon King's Generals!")
+    sys.exit()
+
+
+class Entity:
+    def __init__(self, Name, HP, Power, Accuracy, Exp, Flee_Chance):
+        self.name = Name
+        self.hp = HP
+        self.power = Power
+        self.accuracy = Accuracy
+        self.exp = Exp
+        self.flee_chance = Flee_Chance
+
+    def is_alive(self):
+        if self.hp <= 0:
+            print(f"{self.name} has fallen." "Game Over! \n Exiting Game...")
+            sys.exit()
+
+    def flee(self, enemy):
+        if random.uniform(0, enemy.flee_chance) <= self.flee_chance:
+            return True
         return False
 
-
-def damage(weapon, unit, target):
-    if weapon == None:
-        totaldamage = unit.power
-    else:
-        totaldamage = weapon.power + unit.power
-    target.hp = target.hp - totaldamage
-    if target.hp <= 0:
-        print('{0} has fallen'.format(target.name))
-        if target.name == player.name:
-            print('Game Over!')
-            sys.exit('Exiting Game...')
-    else:
-        print('{0} has {1} hp left!'.format(target.name, target.hp))
-
-
-def hitcheck(weapon, unit, target):
-    if weapon == None:
-        totalhit = unit.accuracy
-    else:
-        totalhit = unit.accuracy + weapon.accuracy
-    if random.random() <= totalhit:
-        print('Hit!')
-        damage(weapon, unit, target)
-    else:
-        print('Miss!')
-
-
-def recover(food):
-    player.hp = min(player.maxhp, food.recovery + player.hp)
-    print('Your HP is now {0}'.format(player.hp))
-
-
-def experience(enemy):
-    print('You have gained {0} experience points.'.format(enemy.exp))
-    player.exp += enemy.exp
-    if player.exp >= 100:
-        player.lvl += 1
-        player.maxhp += 20
-        player.power += 10
-        player.accuracy += .10
-        player.hp = player.maxhp
-        player.exp = player.exp - 100
-        print('Congratulations! You have leveled up!')
-        print('Stats -  HP: {0}, Power: {1}, Accuracy{2}: '.format(player.maxhp, player.power, player.accuracy))
-
-
-# game start
-answer = input('Start? (yes/no): ').lower().strip()
-
-if answer == 'yes':
-    print('Welcome to Novis...'
-          'This is a land that is ruled by the Dragon King Fellheart...'
-          'It is up to you to stand up to his tyranny.')
-    playername = input('Please tell me your name, hero... ')
-    print('We wish you luck on your quest {0}'.format(playername))
-    player = Character(playername, 1, 100, 100, 20, .10, 0, .50)
-    print('This will be a long journey, choose your weapon wisely.')
-    input('Press Enter to Continue')
-    print(
-        'Swords have low power but high accuracy. '
-        'Lances have medium power and accuracy. '
-        'Axes have high power but low accuracy.')
-    input('Press Enter to Continue')
-    currentequip = input('Choose your weapon (Basic Sword, Basic Lance, Basic Axe): ')
-    print(ItemGet(currentequip))
-    if currentequip == 'basic sword':
-        weaponinventory.append(bs.name)
-        winventory.update({'basic sword': bs})
-    elif currentequip == 'basic lance':
-        weaponinventory.append(bl.name)
-        winventory.update({'basic lance': bl})
-    else:
-        weaponinventory.append(ba.name)
-        winventory.update({'basic axe': ba})
-
-    print('You must first travel to the Dragon King\'s Lair')
-    answer = input('Will you travel through the Dark Swamp, or the Deep Gorge?: ').lower().strip()
-    # dark swamp route
-    if answer == 'dark swamp':
-        print('Very well, good luck {0}'.format(playername))
-        print('You travel to the Dark Swamp. '
-              'The swamp is dank and depressing. '
-              'You feel your feet sink into the ooze.')
-        answer = input(
-            'You find an apple. A bit odd to find in a swamp no? Inspect the apple? (yes/no): ').lower().strip()
-        if answer == 'yes':
-            apple.inspect()
-        answer = input('Do you take the apple? (yes/no): ').lower().strip()
-        if answer == 'yes':
-            foodinventory.append(apple.name)
-            finventory.update({'apple': apple})
+    def attack(self, weapon, target):
+        if weapon is None:
+            total_damage = self.power
+            total_hit = self.accuracy
         else:
-            pass
-        print('You travel deep into the swamp.')
-        answer = input('You encounter an Ogre, this must be his swamp. Attempt to flee? (yes/no): ').lower().strip()
-        if answer == 'yes':
-            if not fleecheck(ogre1):
-                print('You have failed to flee! Prepare for battle!')
-                while ogre1.hp > 0:
-                    answer = input('What will you do? (Fight, Use Item): ').lower().strip()
-                    if answer == 'fight':
-                        answer = input('Choose your weapon: {0} '.format(weaponinventory)).lower().strip()
-                        hitcheck(winventory[answer], player, ogre1)
-                        if ogre1.hp <= 0:
-                            break
-                        print('The ogre attacks!')
-                        hitcheck(None, ogre1, player)
-                    else:
-                        answer = input('Choose which item to use: {0} '.format(foodinventory)).lower().strip()
-                        recover(finventory[answer])
-                print('You have defeated Ogre')
-                experience(ogre1)
-
+            total_damage = weapon.power + self.power
+            total_hit = weapon.accuracy + self.accuracy
+        if random.random() <= total_hit:
+            time.sleep(.5)
+            print("Hit!")
+            target.hp -= total_damage
+            if target.hp <= 0:
+                print(f"{target.name} has fallen")
+                return
             else:
-                print('You have fled successfully!')
+                print(f"{target.name} has {target.hp} HP left!")
         else:
-            print('Prepare for battle!')
-            while ogre1.hp > 0:
-                answer = input('What will you do? (Fight, Use Item): ').lower().strip()
-                if answer == 'fight':
-                    answer = input('Choose your weapon: {0} '.format(weaponinventory)).lower().strip()
-                    hitcheck(winventory[answer], player, ogre1)
-                    if ogre1.hp <= 0:
-                        break
-                    print('The ogre attacks!')
-                    hitcheck(None, ogre1, player)
+            print("Miss!")
+
+
+class Character(Entity):
+    def __init__(self, Name, Level, MaxHP, HP, Power, Accuracy, Exp, Flee_Chance):
+        Entity.__init__(self, Name, HP, Power, Accuracy, Exp, Flee_Chance)
+        self.level = Level
+        self.max_hp = MaxHP
+
+    def recover(self, food):
+        self.hp = min(self.max_hp, food.recovery + self.hp)
+        print(f"Your HP is now {self.hp}")
+
+    def experience(self, enemy):
+        print(f"You have gained {enemy.exp} experience points.")
+        self.exp += enemy.exp
+        if self.exp >= 100:
+            self.level += 1
+            self. max_hp += 20
+            self.power += 10
+            self.accuracy += .10
+            self.hp = self.max_hp
+            self.exp -= 100
+            print("Congratulations! You have leveled up!")
+            print(f"Stats - Level: {self.level}, "
+                  f"HP: {self.max_hp}, "
+                  f"Power: {self.power}, "
+                  f"Accuracy: {self.accuracy}, ")
+
+
+class Enemy(Entity):
+    def __init__(self, Name, HP, Power, Accuracy, Exp, Flee_Chance):
+        Entity.__init__(self, Name, HP, Power, Accuracy, Exp, Flee_Chance)
+
+
+class Item:
+    def __init__(self, Name):
+        self.name = Name
+
+    def __str__(self):
+        return "{self.name}".format(self=self)
+
+    def item_get(self):
+        print(f"You have picked up {self.name}")
+
+    __repr__ = __str__
+
+
+class Weapon(Item):
+    def __init__(self, Name, Power, Accuracy):
+        Item.__init__(self, Name)
+        self.power = Power
+        self.accuracy = Accuracy
+
+
+class Food(Item):
+    def __init__(self, Name, Recovery):
+        Item.__init__(self, Name)
+        self.recovery = Recovery
+
+    def inspect(self):
+        print(f"Name: {self.name}, Recovery: {self.recovery}")
+
+
+class Node:
+    def __init__(self, value, text, food, enemies, reward, prompt, complete, end):
+        self.left = None
+        self.right = None
+        self.value = value
+        self.text = text
+        self.food = food
+        self.enemies = enemies
+        self.reward = reward
+        self.prompt = prompt
+        self.complete = complete
+        self.end = end
+
+    def insert(self, value, text, food, enemies, reward, prompt, complete, end):
+        if self.value:
+            if value < self.value:
+                if self.left is None:
+                    self.left = Node(value, text, food, enemies, reward, prompt, complete, end)
                 else:
-                    answer = input('Choose which item to use: {0} '.format(foodinventory)).lower().strip()
-                    recover(finventory[answer])
-            print('You have defeated Ogre')
-            experience(ogre1)
-
-    # deep gorge route
-    elif answer == 'deep gorge':
-        print('Very well, good luck {0}'.format(playername))
-        print('You travel to the Deep Gorge. '
-              'The walls surround you on both sides, making you feel cramped. '
-              'Your footsteps echo into the distance.')
-        answer = input('You find an apple, but no apple tree? Inspect the apple? (yes/no): ').lower().strip()
-        if answer == 'yes':
-            apple.inspect()
-        answer = input('Do you take the apple? (yes/no): ').lower().strip()
-        if answer == 'yes':
-            foodinventory.append(apple.name)
-            finventory.update({'apple': apple})
+                    self.left.insert(value, text, food, enemies, reward, prompt, complete, end)
+            elif value > self.value:
+                if self.right is None:
+                    self.right = Node(value, text, food, enemies, reward, prompt, complete, end)
+                else:
+                    self.right.insert(value, text, food, enemies, reward, prompt, complete, end)
         else:
-            pass
-        print('You travel deep into the gorge.')
-        answer = input(
-            'You encounter a Giant Mushroom; it is quite grotesque. Attempt to flee? (yes/no): ').lower().strip()
-        if answer == 'yes':
-            if not fleecheck(mushroom1):
-                print('You have failed to flee! Prepare for battle!')
-                while ogre1.hp > 0:
-                    answer = input('What will you do? (Fight, Use Item): ').lower().strip()
-                    if answer == 'fight':
-                        answer = input('Choose your weapon: {0} '.format(weaponinventory)).lower().strip()
-                        hitcheck(winventory[answer], player, mushroom1)
-                        if mushroom1.hp <= 0:
-                            break
-                        print('The giant mushroom attacks!')
-                        hitcheck(None, mushroom1, player)
-                    else:
-                        answer = input('Choose which item to use: {0} '.format(foodinventory)).lower().strip()
-                        recover(finventory[answer])
-                print('You have defeated Giant Mushroom')
-                experience(mushroom1)
+            self.value = value
+            self.text = text
+            self.food = food
+            self.enemies = enemies
+            self.prompt = prompt
+            self.complete = complete
+            self.end = end
 
+
+# Combat loop
+def combat(monster):
+    print(f"You have encountered a {monster.name}! What will you do?")
+    while monster.hp >= 0:
+        while True:
+            answer = input("A: Fight | B: Use Food | C: Flee | ").lower().strip()
+            if answer not in ["a", "b", "c"]:
+                print("Please select A, B, or C")
             else:
-                print('You have fled successfully!')
-        else:
-            print('Prepare for battle!')
-            while mushroom1.hp > 0:
-                answer = input('What will you do? (Fight, Use Item): ').lower().strip()
-                if answer == 'fight':
-                    answer = input('Choose your weapon: {0} '.format(weaponinventory)).lower().strip()
-                    hitcheck(winventory[answer], player, mushroom1)
-                    if mushroom1.hp <= 0:
-                        break
-                    print('The giant mushroom attacks!')
-                    hitcheck(None, mushroom1, player)
+                break
+        if answer == "a":
+            while True:
+                answer = input(f"Select weapon: {weapon_inventory} ").lower().strip()
+                if answer not in weapon_inventory:
+                    print("Please select a valid weapon")
                 else:
-                    answer = input('Choose which item to use: {0} '.format(foodinventory)).lower().strip()
-                    recover(finventory[answer])
-            print('You have defeated Giant Mushroom')
-            experience(mushroom1)
-    else:
-        print("That is not a valid answer, the Dragon King/'s reign continues.")
+                    break
+            player.attack(winventory[answer], monster)
+            if monster.hp <= 0:
+                break
+        elif answer == "b":
+            while True:
+                check = False
+                answer = input(f"Select item: {food_inventory} ").lower().strip()
+                for item in range(len(food_inventory)):
+                    if answer != food_inventory[item].name.lower():
+                        check = False
+                        continue
+                    else:
+                        check = True
+                        break
+                if check:
+                    break
+                else:
+                    print("Please select a valid item")
+            player.recover(finventory[answer])
+        elif answer == "c":
+            if player.flee(monster):
+                print("You have successfully fled!")
+                break
+            else:
+                print("You have failed to flee!")
+                continue
+        print(f"{monster.name} attacks.")
+        time.sleep(1)
+        monster.attack(None, player)
+        player.is_alive()
+    if monster.hp <= 0:
+        print(f"{player.name} has slain {monster.name}.")
+        player.experience(monster)
 
 
+# Initializing player character stats with name placeholder
+player = Character(name, 1, 100, 100, 20, .10, 0, .30)
 
+# Weapons set up
+basic_weapons = [
+    Weapon("Bronze Sword", 30, .90),
+    Weapon("Bronze Lance", 40, .80),
+    Weapon("Bronze Axe", 50, .70)
+]
+intermediate_weapons = [
+    Weapon("Silver Sword", 40, .80),
+    Weapon("Silver Lance", 50, .70),
+    Weapon("Silver Axe", 60, .60)
+]
+gold_weapons = [
+    Weapon("Gold Sword", 50, .70),
+    Weapon("Gold Lance", 60, .60),
+    Weapon("Gold Axe", 70, .50)
+]
 
+# Populating enemies
+ogre = [
+    Enemy("Ogre", 100, 10, .75, 40, .50),
+    Enemy("Ogre", 100, 10, .75, 40, .50),
+    Enemy("Ogre", 100, 10, .75, 40, .50)
+]
+mushroom = [
+    Enemy("Warped Mushroom", 120, 20, .70, 55, .40),
+    Enemy("Warped Mushroom", 120, 20, .70, 55, .40),
+    Enemy("Warped Mushroom", 120, 20, .70, 55, .40)
+]
+knight = [
+    Enemy("Dragon Knight", 200, 30, .70, 70, 1)
+]
+wizard = [
+    Enemy("Demon Wizard", 160, 35, .60, 75, 1)
+]
+wolf = [
+    Enemy("Blood Wolf", 200, 35, 60, 75, 1)
+]
+giant = [
+    Enemy("Sand Giant", 220, 40, 55, 80, 1)
+]
 
-else:
-    print('Maybe another time!')
+# food stats
+apple = Food("Apple", 20)
+meat = Food('meat', 30)
+potion = Food('potion', 50)
+greater_potion = Food('greater potion', 80)
+elixir = Food('elixir', 10000)
+
+# Inventory set up
+weapon_inventory = []
+food_inventory = []
+winventory = {}
+finventory = {}
+
+# Game route set up
+root = Node(4,
+            f"Welcome to Novis, {player.name}. You must challenge the Dragon King to save this once peaceful land. "
+            f"Please choose your weapon: ",
+            None,
+            None,
+            basic_weapons,
+            "To travel to the Dragon King\'s lair, you must travel through "
+            "(A) the Dark Woods, or (B) the Swamp of Terror. Which will you choose? ",
+            None,
+            False)
+root.insert(2,
+            "You travel to the Dark Woods. The air is chilly and you can barely see in front of you",
+            apple,
+            ogre,
+            intermediate_weapons,
+            f"{player.name} has emerged from the Dark Woods! You find a fork in the road. "
+            "Do you go to (A) the High Fort, or (B) the Dread Tower? ",
+            None,
+            False)
+root.insert(6,
+            "You travel to the Swamp of Terror. The putrid stench fills your nose making it hard to breathe.",
+            apple,
+            mushroom,
+            intermediate_weapons,
+            f"{player.name} has emerged from the Swamp of Terror! You find a fork in the road."
+            f"Do you go to (A) the Wolf Den, or (B) the Mirage Desert? ",
+            None,
+            False)
+root.insert(1,
+            "You travel to the High Fort. The massive structure sits atop a large cliff. ",
+            meat,
+            knight,
+            gold_weapons,
+            "The Dragon Knight's forces dissipate into the darkness. The Fort is conquered."
+            "Congratulations! You have slain the Dragon King's General. ",
+            False,
+            True)
+root.insert(3,
+            "You travel to the Dread Tower. The colossal structure pierces the heavens themselves. ",
+            meat,
+            wizard,
+            gold_weapons,
+            "Congratulations! You have slain the Dragon King's General. ",
+            False,
+            True)
+root.insert(5,
+            "You travel to the Wolf Den. Bones of its deceased prey cover the ground. ",
+            potion,
+            wolf,
+            gold_weapons,
+            "Congratulations! You have slain the Dragon King's General. ",
+            False,
+            True)
+root.insert(7,
+            "You travel to the Mirage Desert. Sweat drips quickly down your body and evaporates just as fast. ",
+            potion,
+            giant,
+            gold_weapons,
+            "Congratulations! You have slain the Dragon King's General. ",
+            False,
+            True)
+
+# Run Game
+main()
